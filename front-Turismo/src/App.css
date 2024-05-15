@@ -1,38 +1,79 @@
-.App {
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f2f2f2;
+}
+.container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
+}
+h2 {
   text-align: center;
+  color: #333;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.factura-info {
+  margin-bottom: 20px;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.factura-info label {
+  font-weight: bold;
 }
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+.factura-info input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.productos {
+  margin-bottom: 20px;
+}
+.productos input[type="text"] {
+  width: calc(50% - 10px);
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+.productos input[type="button"] {
+  background-color: #4CAF50;
   color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
-
-.App-link {
-  color: #61dafb;
+.productos input[type="button"]:hover {
+  background-color: #45a049;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.factura {
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 100%;
+}
+.factura th, .factura td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+.factura th {
+  background-color: #f2f2f2;
+}
+.factura tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+.factura tr:hover {
+  background-color: #ddd;
+}
+.total {
+  font-weight: bold;
+  text-align: right;
 }
