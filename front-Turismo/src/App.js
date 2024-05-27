@@ -1,6 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { saveAs } from 'file-saver';
+import { Document, Packer, Paragraph, TextRun, HeadingLevel } from 'docx';
 import './App.css';
+import { jsPDF } from "jspdf";
+
 
 function Factura() {
   const [idCliente, setIdCliente] = useState('');
@@ -14,8 +19,6 @@ function Factura() {
   const [alojamiento, setAlojamiento] = useState('');
   const [actividades, setActividades] = useState('');
   const [preferenciasAdicionales, setPreferenciasAdicionales] = useState('');
-  const [productos, setProductos] = useState([]);
-  const [totalAmount, setTotalAmount] = useState(0);
 
   useEffect(() => {
     // Simulación de llamada a la API
@@ -24,7 +27,7 @@ function Factura() {
       Nombre: 'Nombre del Cliente',
       Correo: 'Correo Electrónico del Cliente',
       Telefono: 'Teléfono Cliente',
-      Direccion: 'Dirección del Cliente'
+      Direccion: 'Dirección del Cliente',
     };
     const viajeData = {
       Destino: '¿A qué lugar te gustaría viajar?',
@@ -32,7 +35,7 @@ function Factura() {
       Presupuesto: '¿Cuál es tu presupuesto aproximado para este viaje?',
       Alojamiento: '¿Qué tipo de alojamiento prefieres?',
       Actividades: '¿Qué actividades te gustaría realizar durante tu viaje?',
-      PreferenciasAdicionales: 'Preferencias Adicionales'
+      PreferenciasAdicionales: 'Preferencias Adicionales',
     };
 
     setIdCliente(clienteData.ClienteID);
@@ -48,32 +51,179 @@ function Factura() {
     setPreferenciasAdicionales(viajeData.PreferenciasAdicionales);
   }, []);
 
-  const generarFactura = () => {
-    var total = 0;
-    productos.forEach((producto) => {
-      total += producto.precio * producto.cantidad;
+  const renderAdditionalQuestions = () => {
+    switch (actividades) {
+      case 'aventura':
+        return (
+          <>
+            <label htmlFor="aventuraTipo">¿Qué tipo de actividades de aventura te interesan más?</label>
+            <br />
+            <select
+              name="aventuraTipo"
+              id="aventuraTipo"
+              value={preferenciasAdicionales}
+              onChange={(e) => setPreferenciasAdicionales(e.target.value)}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              <option value="senderismo">Senderismo</option>
+              <option value="esqui">Esquí</option>
+              <option value="surf">Surf</option>
+              <option value="buceo">Buceo</option>
+            </select>
+            <br />
+            <br />
+          </>
+        );
+      case 'cultural':
+        return (
+          <>
+            <label htmlFor="culturalTipo">¿Qué tipo de lugares culturales te gustaría visitar?</label>
+            <br />
+            <select
+              name="culturalTipo"
+              id="culturalTipo"
+              value={preferenciasAdicionales}
+              onChange={(e) => setPreferenciasAdicionales(e.target.value)}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              <option value="museos">Museos</option>
+              <option value="historicos">Sitios históricos</option>
+              <option value="galerias">Galerías de arte</option>
+              <option value="eventos">Eventos culturales locales</option>
+            </select>
+            <br />
+            <br />
+          </>
+        );
+      case 'relax':
+        return (
+          <>
+            <label htmlFor="playaTipo">¿Prefieres una playa tranquila o una concurrida?</label>
+            <br />
+            <select
+              name="playaTipo"
+              id="playaTipo"
+              value={preferenciasAdicionales}
+              onChange={(e) => setPreferenciasAdicionales(e.target.value)}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              <option value="tranquila">Playa tranquila</option>
+              <option value="concurrida">Playa concurrida</option>
+            </select>
+            <br />
+            <br />
+          </>
+        );
+      case 'gastronomia':
+        return (
+          <>
+            <label htmlFor="cocinaTipo">¿Qué tipo de cocina te interesa más?</label>
+            <br />
+            <select
+              name="cocinaTipo"
+              id="cocinaTipo"
+              value={preferenciasAdicionales}
+              onChange={(e) => setPreferenciasAdicionales(e.target.value)}
+            >
+              <option value="" disabled>
+                Seleccione una opción
+              </option>
+              <option value="local">Local/tradicional</option>
+              <option value="internacional">Internacional</option>
+              <option value="vegetariana">Vegetariana/vegana</option>
+              <option value="alta">Alta cocina</option>
+            </select>
+            <br />
+            <br />
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const generateDocument = async () => {
+    const doc = new Document({
+      sections: [
+        {
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({ text: 'Factura', bold: true, size: 24 }),
+              ],
+            }),
+            new Paragraph({ text: `Numero Id: ${idCliente}` }),
+            new Paragraph({ text: `Nombre Cliente: ${nombreCliente}` }),
+            new Paragraph({ text: `Correo Electrónico: ${correoCliente}` }),
+            new Paragraph({ text: `Teléfono: ${telefonoCliente}` }),
+            new Paragraph({ text: `Dirección: ${direccionCliente}` }),
+            new Paragraph({ text: `Destino Deseado: ${destino}` }),
+            new Paragraph({ text: `Duración del Viaje: ${duracion}` }),
+            new Paragraph({ text: `Presupuesto: ${presupuesto}` }),
+            new Paragraph({ text: `Preferencias de Alojamiento: ${alojamiento}` }),
+            new Paragraph({ text: `Actividades de Interés: ${actividades}` }),
+            new Paragraph({ text: `Preferencias Adicionales: ${preferenciasAdicionales}` }),
+            new Paragraph({ text: 'Descripción del Viaje:', heading: HeadingLevel.HEADING_1 }),
+            new Paragraph({
+              text: `Estimado/a ${nombreCliente},\n\n
+              Nos complace informarle sobre su próximo viaje a ${destino}. 
+              Este viaje tiene una duración de ${duracion}, 
+              durante el cual disfrutará de ${actividades} y se alojará en un ${alojamiento}.
+              Con un presupuesto de ${presupuesto}, 
+              hemos preparado una experiencia única que incluye ${preferenciasAdicionales}.
+              Esperamos que tenga un viaje inolvidable lleno de aventuras y recuerdos inolvidables.
+              \n\n¡Buen viaje!\n\n
+              Atentamente,\n
+              Su Agencia de Viajes`
+            }),
+          ],
+        },
+      ],
     });
-    setTotalAmount(total.toFixed(2));
+  
+    const blob = await Packer.toBlob(doc);
+    saveAs(blob, 'Factura.docx');
   };
+  
+  
+  
+  
+  
 
-  const handleAgregarProducto = () => {
-    const nombreProducto = prompt('Ingrese Nombre del Producto');
-    if (nombreProducto === '*') return;
-
-    const precio = parseFloat(prompt('Ingrese Precio'));
-    const cantidad = parseInt(prompt('Ingrese Cantidad'));
-    const subtotal = precio * cantidad;
-
-    const nuevoProducto = {
-      nombre: nombreProducto,
-      precio: precio,
-      cantidad: cantidad,
-      subtotal: subtotal,
-    };
-
-    setProductos([...productos, nuevoProducto]);
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    doc.text("Factura", 20, 20);
+    doc.text(`Numero Id: ${idCliente}`, 20, 30);
+    doc.text(`Nombre Cliente: ${nombreCliente}`, 20, 40);
+    doc.text(`Correo Electrónico: ${correoCliente}`, 20, 50);
+    doc.text(`Teléfono: ${telefonoCliente}`, 20, 60);
+    doc.text(`Dirección: ${direccionCliente}`, 20, 70);
+    doc.text(`Destino Deseado: ${destino}`, 20, 80);
+    doc.text(`Duración del Viaje: ${duracion}`, 20, 90);
+    doc.text(`Presupuesto: ${presupuesto}`, 20, 100);
+    doc.text(`Preferencias de Alojamiento: ${alojamiento}`, 20, 110);
+    doc.text(`Actividades de Interés: ${actividades}`, 20, 120);
+    doc.text(`Preferencias Adicionales: ${preferenciasAdicionales}`, 20, 130);
+    doc.text("Descripción del Viaje:", 20, 140);
+    doc.text(`Estimado/a ${nombreCliente},\n\n
+      Nos complace informarle sobre su próximo viaje a ${destino}. 
+      Este viaje tiene una duración de ${duracion}, 
+      durante el cual disfrutará de ${actividades} y se alojará en un ${alojamiento}.
+      Con un presupuesto de ${presupuesto}, 
+      hemos preparado una experiencia única que incluye ${preferenciasAdicionales}.
+      Esperamos que tenga un viaje inolvidable lleno de aventuras y recuerdos inolvidables.
+      \n\n¡Buen viaje!\n\n
+      Atentamente,\n
+      Su Agencia de Viajes`, 20, 150);
+    doc.save("Factura.pdf");
   };
-
+  
   return (
     <div className="container">
       <h2>Factura</h2>
@@ -164,92 +314,67 @@ function Factura() {
         <br />
         <label htmlFor="presupuesto">Presupuesto</label>
         <br />
-        <input
-          type="text"
+        <select
           name="presupuesto"
           id="presupuesto"
-          placeholder="Presupuesto"
           value={presupuesto}
           onChange={(e) => setPresupuesto(e.target.value)}
-        />
+        >
+          <option value="" disabled selected>
+            Presupuesto
+          </option>
+          <option value="bajo">Menos de $500.000</option>
+          <option value="medio">Entre $500.000 y $1.000.000</option>
+          <option value="alto">Más de $1.000.000</option>
+        </select>
         <br />
         <br />
         <label htmlFor="alojamiento">Preferencias de Alojamiento</label>
         <br />
         <select
-          type="text"
           name="alojamiento"
           id="alojamiento"
           placeholder="Preferencias de Alojamiento"
           value={alojamiento}
           onChange={(e) => setAlojamiento(e.target.value)}
-        />
+        >
+          <option value="" disabled selected>
+            Preferencias de Alojamiento
+          </option>
+          <option value="hotel">Hotel</option>
+          <option value="hostal">Hostal</option>
+          <option value="apartamento">Apartamento</option>
+          <option value="casa">Casa</option>
+          <option value="camping">Camping</option>
+        </select>
+
         <br />
         <br />
         <label htmlFor="actividades">Actividades de Interés</label>
         <br />
-        <input
-          type="text"
+        <select
           name="actividades"
           id="actividades"
-          placeholder="Actividades de Interés"
           value={actividades}
           onChange={(e) => setActividades(e.target.value)}
-        />
+        >
+          <option value="" disabled selected>
+            Actividades de Interés
+          </option>
+          <option value="cultural">Turismo Cultural</option>
+          <option value="aventura">Aventura/Deportes al aire libre</option>
+          <option value="relax"> Relax/Playa</option>
+          <option value="gastronomia">Gastronomía</option>
+        </select>
+
         <br />
         <br />
-        <label htmlFor="preferenciasAdicionales">Preferencias Adicionales</label>
-        <br />
-        <input
-          type="text"
-          name="preferenciasAdicionales"
-          id="preferenciasAdicionales"
-          placeholder="Preferencias Adicionales"
-          value={preferenciasAdicionales}
-          onChange={(e) => setPreferenciasAdicionales(e.target.value)}
-        />
-        <br />
-        <br />
-        {/* Agregar campos adicionales basados en las preferencias */}
+        {renderAdditionalQuestions()}
       </div>
+
       <div className="productos">
-        <input
-          type="button"
-          name="Continuar"
-          onClick={generarFactura}
-          value="Continuar"
-        />
-        <input
-          type="button"
-          onClick={handleAgregarProducto}
-          value="Agregar Producto"
-        />
-      </div>
-      <table className="factura">
-        <thead>
-          <tr>
-            <th>Nombre Producto</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productos.map((producto, index) => (
-            <tr key={index}>
-              <td>{producto.nombre}</td>
-              <td>{producto.precio}</td>
-              <td>{producto.cantidad}</td>
-              <td>{producto.subtotal}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="total">
-        <p>Total: $<span>{totalAmount}</span></p>
-      </div>
-      <div className="productos">
-        <input type="button" onClick={() => window.print()} value="Imprimir Factura" />
+        <button onClick={generateDocument}>Guardar como Word</button>
+        <button onClick={generatePDF}>Guardar como PDF</button>
       </div>
     </div>
   );

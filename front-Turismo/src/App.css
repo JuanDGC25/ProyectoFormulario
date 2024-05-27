@@ -1,79 +1,71 @@
+/* App.css */
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  padding: 20px;
-  background-color: #f2f2f2;
+  padding: 0;
+  background-color: #f4f4f4;
 }
-.container {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  margin: 0 auto;
-}
-h2 {
+
+.App {
   text-align: center;
-  color: #333;
 }
-.factura-info {
+
+header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
-.factura-info label {
+
+label {
+  display: block;
+  margin-bottom: 5px;
   font-weight: bold;
 }
-.factura-info input[type="text"] {
+
+input[type='text'],
+input[type='email'],
+select {
   width: 100%;
   padding: 10px;
-  margin-top: 5px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 4px;
   box-sizing: border-box;
 }
-.productos {
-  margin-bottom: 20px;
-}
-.productos input[type="text"] {
-  width: calc(50% - 10px);
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-  display: inline-block;
-}
-.productos input[type="button"] {
-  background-color: #4CAF50;
+
+button {
+  background-color: #4caf50;
   color: white;
   padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s ease;
 }
-.productos input[type="button"]:hover {
+
+button:hover {
   background-color: #45a049;
 }
-.factura {
-  margin-top: 20px;
-  border-collapse: collapse;
-  width: 100%;
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
-.factura th, .factura td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-.factura th {
-  background-color: #f2f2f2;
-}
-.factura tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-.factura tr:hover {
-  background-color: #ddd;
-}
-.total {
-  font-weight: bold;
-  text-align: right;
+
+button + button {
+  margin-left: 10px;
 }

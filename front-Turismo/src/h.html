@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>McDonald's Logo</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+        }
+        .logo {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+        .arch {
+            position: absolute;
+            bottom: 0;
+            width: 60px;
+            height: 180px;
+            background-color: #FFC300;
+            border-radius: 60px 60px 0 0;
+        }
+        .arch.left {
+            left: 20px;
+            transform: rotate(-15deg);
+            transform-origin: bottom right;
+        }
+        .arch.right {
+            right: 20px;
+            transform: rotate(15deg);
+            transform-origin: bottom left;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <div class="arch left"></div>
+        <div class="arch right"></div>
+    </div>
+</body>
+</html>
